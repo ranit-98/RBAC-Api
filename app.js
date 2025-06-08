@@ -3,17 +3,14 @@ const path = require('path');
 const session = require('express-session');
 const flash = require('connect-flash');
 const cookieParser = require('cookie-parser');
-const cors = require('cors');
 
+const configureCors = require('./App/config/corsConfig');
 const app = express();
 
 // -----------------------------
 // CORS Setup - Allow Frontend Origin
 // -----------------------------
-app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true 
-}));
+app.use(configureCors());
 
 
 
@@ -47,6 +44,7 @@ app.use((req, res, next) => {
 // Routes
 // -----------------------------
 const rbacRoutes = require('./App/routes/rbacRoutes');
+
 app.use('/', rbacRoutes); 
 
 // -----------------------------

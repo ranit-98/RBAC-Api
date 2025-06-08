@@ -11,6 +11,8 @@ const imageUpload = require('../helper/fileUpload');
 router.post('/register', imageUpload.single('profileImage'), authController.register);
 router.post("/verify-otp", authController.verifyOtp);
 router.post("/login", authController.login);
+router.post('/reset-password-link',authController.resetPasswordLink);
+router.post('/reset-password/:id/:token',authController.resetPassword);
 
 //--------------------------------------------------------------------------------------
 // Protected Routes (Require authentication)

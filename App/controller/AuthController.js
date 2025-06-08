@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const sendEmailVerificationOTP = require("../helper/sendEmailVerificationOTP");
 
 const { registerSchema, otpVerifySchema, loginSchema, updateProfileSchema } = require("../validation/userValidation");
+const  transporter  = require("../config/emailConfig");
 
 const asyncHandler = fn => (req, res, next) => 
   Promise.resolve(fn(req, res, next)).catch(next);
@@ -216,10 +217,193 @@ const updateProfile = asyncHandler(async (req, res) => {
 });
 
 
+//--------------------------------------------------------------------------------------
+//                                  Forget Password Controller
+//--------------------------------------------------------------------------------------
+
+//--------------------------------------------------------------------------------------
+//                              Send Reset Password Link Controller
+//--------------------------------------------------------------------------------------
+
+const resetPasswordLink = asyncHandler(async (req, res) => {
+  try {
+    //--------------------------------------------------------------------------------------
+    // Step 1: Validate email and check if user exists
+    //--------------------------------------------------------------------------------------
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ status: false, message: "Email field is required" });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ status: false, message: "Email doesn't exist" });
+    }
+
+    //--------------------------------------------------------------------------------------
+    // Step 2: Generate token and send password reset email
+    //--------------------------------------------------------------------------------------
+    const secret = user._id + process.env.JWT_SECRET; // <--- Unique secret for this user
+    const token = jwt.sign({ userID: user._id }, secret, { expiresIn: '20m' }); // <--- Generate JWT token
+
+    const resetLink = `${process.env.FRONTEND_HOST}/account/reset-password-confirm/${user._id}/${token}`; // <--- Frontend reset link
+
+  await transporter.sendMail({
+  from: process.env.EMAIL_FROM,
+  to: user.email,
+  subject: "Password Reset Link",
+  html: `<p>Click <a href="${resetLink}">here</a> to reset your password.</p>`
+});
+
+    res.status(200).json({ status: true, message: "Password reset email sent. Please check your email." });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ status: false, message: "Unable to send password reset email. Please try again later." });
+  }
+});
+
+
+
+//--------------------------------------------------------------------------------------
+//                               Reset Password Controller
+//--------------------------------------------------------------------------------------
+
+const resetPassword = asyncHandler(async (req, res) => {
+  try {
+    //--------------------------------------------------------------------------------------
+    // Step 1: Validate user and token
+    //--------------------------------------------------------------------------------------
+    const { password, confirm_password } = req.body;
+    const { id, token } = req.params;
+
+    // Debug log token
+    console.log("Token to verify:", token);
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ status: false, message: "User not found" });
+    }
+
+    const new_secret = user._id + process.env.JWT_SECRET; 
+
+    // Verify token safely
+    try {
+      jwt.verify(token, new_secret); // <--- Verify token
+    } catch (verifyError) {
+      return res.status(401).json({ status: false, message: "Invalid or expired token" });
+    }
+
+    // Validate password inputs
+    if (!password || !confirm_password) {
+      return res.status(400).json({ status: false, message: "New Password and Confirm New Password are required" });
+    }
+
+    if (password !== confirm_password) {
+      return res.status(400).json({ status: false, message: "New Password and Confirm New Password don't match" });
+    }
+
+    //--------------------------------------------------------------------------------------
+    // Step 2: Hash new password and update in database
+    //--------------------------------------------------------------------------------------
+    const salt = await bcrypt.genSalt(10); // <--- Generate salt
+    const newHashPassword = await bcrypt.hash(password, salt); // <--- Hash password
+
+    await User.findByIdAndUpdate(user._id, { $set: { password: newHashPassword } }); // <--- Update password in DB
+
+    // Send success response
+    res.status(200).json({ status: "success", message: "Password reset successfully" });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ status: "failed", message: "Unable to reset password. Please try again later." });
+  }
+});
+
+
+//--------------------------------------------------------------------------------------
+//                               Update Password Controller
+//--------------------------------------------------------------------------------------
+
+const updatePassword = asyncHandler(async (req, res) => {
+  try {
+    //--------------------------------------------------------------------------------------
+    // Step 1: Extract token from header and decode user ID
+    //--------------------------------------------------------------------------------------
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ status: false, message: 'Unauthorized: No token provided' });
+    }
+
+    const token = authHeader.split(' ')[1];
+
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+      return res.status(401).json({ status: false, message: 'Unauthorized: Invalid token' });
+    }
+
+    const user_id = decoded.userId;
+
+    //--------------------------------------------------------------------------------------
+    // Step 2: Validate password field
+    //--------------------------------------------------------------------------------------
+    const { password } = req.body;
+
+    if (!password) {
+      return res.status(400).json({ status: false, message: 'Password is required' });
+    }
+
+    //--------------------------------------------------------------------------------------
+    // Step 3: Find user and update password
+    //--------------------------------------------------------------------------------------
+    const user = await User.findById(user_id);
+
+    if (!user) {
+      return res.status(404).json({ status: false, message: 'User not found' });
+    }
+
+    const hashedPassword = await HashedPassword(password); // <--- Hash new password
+
+    await User.findByIdAndUpdate(user_id, {
+      $set: { password: hashedPassword },
+    });
+
+    //--------------------------------------------------------------------------------------
+    // Step 4: Send success response
+    //--------------------------------------------------------------------------------------
+    return res.status(200).json({
+      status: true,
+      message: 'Password updated successfully',
+    });
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      status: false,
+      message: 'Something went wrong while updating the password',
+    });
+  }
+});
+
+
+
+
+
+
+
+
 module.exports = {
   register,
   verifyOtp,
   login,
   getProfile,
   updateProfile,
+  resetPasswordLink,
+  resetPassword,
+  updatePassword
 };

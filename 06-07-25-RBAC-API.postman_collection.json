@@ -1,0 +1,265 @@
+{
+	"info": {
+		"_postman_id": "3beb2fc0-842f-44fd-a07e-da45397b25e7",
+		"name": "06-07-25-RBAC-API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12242192"
+	},
+	"item": [
+		{
+			"name": "http://localhost:3005/register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "Admin",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "ranitAdmin@yopmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "Test@123",
+							"type": "text"
+						},
+						{
+							"key": "phone",
+							"value": "7044744899",
+							"type": "text"
+						},
+						{
+							"key": "address",
+							"value": "{\n    \"street\": \"123 Main St\",\n    \"city\": \"New York\",\n    \"state\": \"NY\",\n    \"postalCode\": \"10001\",\n    \"country\": \"USA\"\n  }",
+							"type": "text"
+						},
+						{
+							"key": "gender",
+							"value": "male",
+							"type": "text"
+						},
+						{
+							"key": "dateOfBirth",
+							"value": "1998-01-01\t",
+							"type": "text"
+						},
+						{
+							"key": "role",
+							"value": "admin",
+							"type": "text"
+						},
+						{
+							"key": "profileImage",
+							"type": "file",
+							"src": "/G:/1.WEB-SKITTER/Node/ejs-crud/uploads/img1-(1).jpg-1746251654873.jpeg"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3005/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3005",
+					"path": [
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3005/verify-otp",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"john@yopmail.com\",\r\n  \"otp\": \"328785\"   \r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3005/verify-otp",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3005",
+					"path": [
+						"verify-otp"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3005/login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"ranit@yopmail.com\",\r\n  \"password\": \"Test@123\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3005/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3005",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3005/profile",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODQzZDlmMDI3MThlMjE1YzRhZjU5OTYiLCJyb2xlIjoidXNlciIsImVtYWlsIjoicmFuaXRAeW9wbWFpbC5jb20iLCJpYXQiOjE3NDkyNzc2MzEsImV4cCI6MTc0OTM2NDAzMX0.a_WPAiYyg_CYNwo8fcojkVDM9Uq-HgYthGC-l5O54HA",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"ranit@yopmail.com\",\r\n  \"password\": \"Test@123\"\r\n}\r\n"
+				},
+				"url": {
+					"raw": "http://localhost:3005/profile",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3005",
+					"path": [
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3005/profile",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODQzZDlmMDI3MThlMjE1YzRhZjU5OTYiLCJyb2xlIjoidXNlciIsImVtYWlsIjoicmFuaXRAeW9wbWFpbC5jb20iLCJpYXQiOjE3NDkyNzc2MzEsImV4cCI6MTc0OTM2NDAzMX0.a_WPAiYyg_CYNwo8fcojkVDM9Uq-HgYthGC-l5O54HA",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "phone",
+							"value": "7044744819",
+							"type": "text"
+						},
+						{
+							"key": "profileImage",
+							"type": "file",
+							"src": "/G:/1.WEB-SKITTER/Node/ejs-crud/uploads/7.jpg-1746247555694.jpeg"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3005/profile",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3005",
+					"path": [
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3005/reset-password-link",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"ranitAdmin@yopmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3005/reset-password-link",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3005",
+					"path": [
+						"reset-password-link"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3005/reset-password/6843de5021c73a1ec302b2e7/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2ODQzZGU1MDIxYzczYTFlYzMwMmIyZTciLCJpYXQiOjE3NDkzNjM2ODQsImV4cCI6MTc0OTM2NDg4NH0.xQIjW1m238Y_rRi9vDpo-Xxhn6QTNZkl9HEbxxjnNgc",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"password\":\"Test@1234\",\r\n    \"confirm_password\":\"Test@1234\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3005/reset-password/6843de5021c73a1ec302b2e7/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2ODQzZGU1MDIxYzczYTFlYzMwMmIyZTciLCJpYXQiOjE3NDkzNjM2ODQsImV4cCI6MTc0OTM2NDg4NH0.xQIjW1m238Y_rRi9vDpo-Xxhn6QTNZkl9HEbxxjnNgc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3005",
+					"path": [
+						"reset-password",
+						"6843de5021c73a1ec302b2e7",
+						"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI2ODQzZGU1MDIxYzczYTFlYzMwMmIyZTciLCJpYXQiOjE3NDkzNjM2ODQsImV4cCI6MTc0OTM2NDg4NH0.xQIjW1m238Y_rRi9vDpo-Xxhn6QTNZkl9HEbxxjnNgc"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
